@@ -1,5 +1,7 @@
 package com.bluetooth.bluetooth2;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,6 +36,8 @@ public class BluetoothService extends Service {
     private Timer timer;
     private BluetoothAdapter mBluetoothAdapter;
     private DatagramSocket mSocket;
+    private int startId;
+    private Notification mNotification;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -44,7 +49,17 @@ public class BluetoothService extends Service {
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.d(TAG, device.getName() + " : " + device.getAddress());
-                sendAddresses(("/c/" + device.getAddress()).getBytes());
+                //sendAddresses(("/c/" + device.getAddress()).getBytes());
+            }
+            else {
+                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                    int adapterState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+                    if (adapterState == BluetoothAdapter.STATE_OFF || adapterState == BluetoothAdapter.STATE_TURNING_OFF){
+                        Log.e(TAG, "Bluetooth Adapter is off.");
+                        stopForeground(true);
+                        stopSelf();
+                    }
+                }
             }
         }
     };
@@ -60,12 +75,24 @@ public class BluetoothService extends Service {
 
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
+
+        if (Utils.isPreAndroidO())
+            HandlerNotifications.PreO.createNotification(this);
+        else HandlerNotifications.O.createNotification(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        this.startId = startId;
+        if (intent.getAction() != null && intent.getAction().equals("stop_service")) {
+            Intent stopServiceIntent = new Intent(MainActivity.STOPPED_SERVICE_BROADCAST_RECEIVER);
+            sendBroadcast(stopServiceIntent);
+            stopForeground(true);
+            stopSelf();
+        }
         try {
             mSocket = new DatagramSocket();
         } catch (SocketException e) {
@@ -82,11 +109,6 @@ public class BluetoothService extends Service {
     }
 
     private void bluetoothSearch() {
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            timer.cancel();
-            stopSelf();
-        }
 
         if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
