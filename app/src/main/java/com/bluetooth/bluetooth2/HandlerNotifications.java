@@ -19,8 +19,7 @@ public class HandlerNotifications {
     private static PendingIntent getStopServicePI(Service context) {
         Intent intentStopService = new Intent(context, BluetoothService.class);
         intentStopService.setAction("stop_service");
-        Intent stopServiceIntent = new Intent(MainActivity.STOPPED_SERVICE_BROADCAST_RECEIVER);
-        context.sendBroadcast(stopServiceIntent);
+
         Intent intentLaunchMainActivity = new Intent(context, MainActivity.class);
         PendingIntent.getActivity(context, getRandomNumber(), intentLaunchMainActivity, PendingIntent.FLAG_UPDATE_CURRENT);
         return PendingIntent.getService(context, getRandomNumber(), intentStopService, 0);

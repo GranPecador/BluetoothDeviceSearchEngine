@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 public class ChangeRecipient extends AppCompatActivity {
 
-    String enterText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,18 +18,29 @@ public class ChangeRecipient extends AppCompatActivity {
 
 
         final EditText ipAddress = findViewById(R.id.ipAddress);
+        ipAddress.setHint("Now ipAddress: \n"+ ReceiverAddress.ipAddress);
         ipAddress.addTextChangedListener(new MaskWatcher("###.###.###.###"));
 
         final EditText port = findViewById(R.id.port);
+        port.setHint("Now port: "+ ReceiverAddress.port);
 
-        Button saveIPAddress = findViewById(R.id.saveIPAddress);
+        final Button saveIPAddress = findViewById(R.id.saveIPAddress);
         saveIPAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), ipAddress.getText(), Toast.LENGTH_SHORT).show();
-                //receiverAddress.ipAddress = ipAddress.getText().toString();
-                receiverAddress.port = Integer.parseInt(port.getText().toString());
-                Toast.makeText(getApplicationContext(), "IP:"+ receiverAddress.ipAddress, Toast.LENGTH_SHORT).show();
+                Utils.setReceiverIpAddress(ipAddress.getText().toString());
+                String tempPort = port.getText().toString();
+                ipAddress.setText("");
+                ipAddress.setHint("Now ipAddress: \n"+ ReceiverAddress.ipAddress);
+                if (!tempPort.isEmpty())
+                    Utils.setReceiverPort(Integer.parseInt(tempPort));
+                port.setText("");
+                port.setHint("Now port: "+ ReceiverAddress.port);
+                if(port.hasFocus()) port.clearFocus();
+                ipAddress.clearFocus();
+
+                Toast.makeText(getApplicationContext(), "IP:"+ ReceiverAddress.ipAddress, Toast.LENGTH_SHORT).show();
             }
         });
     }
