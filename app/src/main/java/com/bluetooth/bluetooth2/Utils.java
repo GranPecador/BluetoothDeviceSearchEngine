@@ -3,7 +3,9 @@ package com.bluetooth.bluetooth2;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -20,11 +22,17 @@ public class Utils {
     }
 
     public static void getReceiverIpAddress() {
-        //ReceiverAddress.ipAddress = mSharedPreferences.getString("ip_address", "255.255.255.255");
+        ReceiverAddress.ipAddressText =
+                mSharedPreferences.getString("ip_address", "192.168.1.4");
+        String[] addr = (ReceiverAddress.ipAddressText).split("\\.");
+        ReceiverAddress.ipAddressBytes = new byte[]{(byte)Integer.parseInt(addr[0]),
+                (byte)Integer.parseInt(addr[1]),
+                (byte)Integer.parseInt(addr[2]),
+                (byte)Integer.parseInt(addr[3])};
     }
 
     public static void getReceiverPort() {
-        ReceiverAddress.port = mSharedPreferences.getInt("port", 0);
+        ReceiverAddress.port = mSharedPreferences.getInt("port", 12053);
     }
 
     public static void setReceiverIpAddress(String address){

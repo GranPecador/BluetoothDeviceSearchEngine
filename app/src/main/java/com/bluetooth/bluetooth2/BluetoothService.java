@@ -116,10 +116,8 @@ public class BluetoothService extends Service {
             public void run() {
                 if (isOnline()) {
                     try {
-                        System.out.println(InetAddress.getByAddress(ReceiverAddress.ipAddress).toString()+
-                                ReceiverAddress.port);
                         DatagramPacket packet = new DatagramPacket(message, message.length,
-                                InetAddress.getByAddress(ReceiverAddress.ipAddress),
+                                InetAddress.getByAddress(ReceiverAddress.ipAddressBytes),
                                 ReceiverAddress.port);
                         mSocket.send(packet);
                     } catch (IOException e) {

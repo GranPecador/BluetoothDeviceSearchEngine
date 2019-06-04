@@ -18,7 +18,7 @@ public class ChangeRecipient extends AppCompatActivity {
 
 
         final EditText ipAddress = findViewById(R.id.ipAddress);
-        ipAddress.setHint("Now ipAddress: \n"+ ReceiverAddress.ipAddress);
+        ipAddress.setHint("Now ipAddress: \n"+ ReceiverAddress.ipAddressText);
         ipAddress.addTextChangedListener(new MaskWatcher("###.###.###.###"));
 
         final EditText port = findViewById(R.id.port);
@@ -28,11 +28,12 @@ public class ChangeRecipient extends AppCompatActivity {
         saveIPAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), ipAddress.getText(), Toast.LENGTH_SHORT).show();
-                Utils.setReceiverIpAddress(ipAddress.getText().toString());
-                String tempPort = port.getText().toString();
+                String tempAddress = ipAddress.getText().toString();
+                if (!tempAddress.isEmpty())
+                    Utils.setReceiverIpAddress(ipAddress.getText().toString());
                 ipAddress.setText("");
-                ipAddress.setHint("Now ipAddress: \n"+ ReceiverAddress.ipAddress);
+                ipAddress.setHint("Now ipAddress: \n"+ ReceiverAddress.ipAddressText);
+                String tempPort = port.getText().toString();
                 if (!tempPort.isEmpty())
                     Utils.setReceiverPort(Integer.parseInt(tempPort));
                 port.setText("");
@@ -40,7 +41,7 @@ public class ChangeRecipient extends AppCompatActivity {
                 if(port.hasFocus()) port.clearFocus();
                 ipAddress.clearFocus();
 
-                Toast.makeText(getApplicationContext(), "IP:"+ ReceiverAddress.ipAddress, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "IP:"+ ReceiverAddress.ipAddressText, Toast.LENGTH_SHORT).show();
             }
         });
     }

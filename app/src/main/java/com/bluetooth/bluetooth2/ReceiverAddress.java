@@ -4,7 +4,7 @@ import java.net.InetAddress;
 
 public class ReceiverAddress {
 
-    static byte[] ipAddress = new byte[]{(byte)192, (byte)168, 1, 5};
-    static int port = 12053;
-
+    public static String ipAddressText;
+    public static byte[] ipAddressBytes = new byte[4];
+    public static int port;
 }

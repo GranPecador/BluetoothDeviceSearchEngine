@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.annotation.NonNull;
@@ -34,7 +35,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private final static int REQUEST_ENABLE_BT = 1;
-    private final static int MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 2;
+    private final static int MY_PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 2;
 
     private final static String STOPPED_REASON_SERVICE_IS_NOT_WORKING = "Service is ready to work.";
     private final static String BLUETOOTH_REASON_SERVICE_IS_NOT_WORKING = "Turn on the bluetooth to make the service work.";
@@ -103,17 +104,13 @@ public class MainActivity extends AppCompatActivity {
             if (mBound)showServiceWorkView();
             else {
                 showServiceNotWorkView(STOPPED_REASON_SERVICE_IS_NOT_WORKING);
+                SharedPreferences saveTokenPref = PreferenceManager.getDefaultSharedPreferences(this);
                 Utils.initializeReceiverAddress(this);
             }
 
 
             if (!mBluetoothAdapter.isEnabled()) {
                 showServiceNotWorkView(BLUETOOTH_REASON_SERVICE_IS_NOT_WORKING);
-            }
-
-            if (!checkPermissions()) {
-                Toast.makeText(this, "Give me permission: ACCESS_FINE_LOCATION", Toast.LENGTH_LONG).show();
-                requestMultiplePermissions();
             }
 
             IntentFilter serviceIntentFilter = new IntentFilter();
@@ -146,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     if (checkPermissions()) {
                         startSearchBluetoothDevices();
                     } else {
-                        Toast.makeText(this, "Give me permission: ACCESS_FINE_LOCATION", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Give me permission: ACCESS_COARSE_LOCATION", Toast.LENGTH_LONG).show();
                         requestMultiplePermissions();
                     }
                 }
@@ -221,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
     public void requestMultiplePermissions() {
         ActivityCompat.requestPermissions(this,
                 new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
                 },
-                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+                MY_PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
     }
 
     @TargetApi(23)
@@ -231,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int RequestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (RequestCode == MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION) {
+        if (RequestCode == MY_PERMISSION_REQUEST_ACCESS_COARSE_LOCATION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 if (shouldShowRequestPermissionRationale(permissions[0])) {
                     Log.i(TAG, "Permission denied without 'NEVER ASK AGAIN': "
@@ -256,8 +253,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                MY_PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
                     }
                 }).show();
     }

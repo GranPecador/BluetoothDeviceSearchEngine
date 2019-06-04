@@ -15,7 +15,7 @@ public class MaskWatcher implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        isDeleting = count > after;
+        //isDeleting = count > after;
     }
 
     @Override
@@ -25,21 +25,21 @@ public class MaskWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable editable) {
-        if (isRunning || isDeleting) {
-            return;
-        }
-        isRunning = true;
-
-        int editableLength = editable.length();
-        if (editableLength < mask.length()) {
-            if (mask.charAt(editableLength) != '#') {
-                editable.append(mask.charAt(editableLength));
-//            } else if (mask.charAt(editableLength-1) != '#') {
-             //   editable.insert(editableLength-1, mask, editableLength-1, editableLength);
-            }
-        }
-
-        isRunning = false;
+//        if (isRunning || isDeleting) {
+//            return;
+//        }
+//        isRunning = true;
+//
+//        int editableLength = editable.length();
+//        if (editableLength < mask.length()) {
+//            if (mask.charAt(editableLength) != '#') {
+//                editable.append(mask.charAt(editableLength));
+////            } else if (mask.charAt(editableLength-1) != '#') {
+//             //   editable.insert(editableLength-1, mask, editableLength-1, editableLength);
+//            }
+//        }
+//
+//        isRunning = false;
     }
 
 }
